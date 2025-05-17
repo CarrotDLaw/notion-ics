@@ -4,10 +4,10 @@ import type { QueryDatabaseParameters } from '@notionhq/client/build/src/api-end
 export default {
 	filter: {
 		or: [
-			{ property: 'Status', status: { equals: 'Unstarted' } },
-			{ property: 'Status', status: { equals: 'Tentative' } },
-			{ property: 'Status', status: { equals: 'Suspended' } },
-			{ property: 'Status', status: { equals: 'Ongoing' } },
+			{ property: 'Status', status: { equals: '💤 Unstarted' } },
+			{ property: 'Status', status: { equals: '⚠️ Tentative' } },
+			{ property: 'Status', status: { equals: '📌 Suspended' } },
+			{ property: 'Status', status: { equals: '💡 Ongoing' } },
 		]
 	},
 	dateProperty: 'Date',
