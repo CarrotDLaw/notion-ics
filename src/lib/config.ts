@@ -1,14 +1,12 @@
 import { ICalEventBusyStatus } from 'ical-generator';
 import type { QueryDatabaseParameters } from '@notionhq/client/build/src/api-endpoints';
 
+const today = new Date().toISOString().split('T')[0];
+
 export default {
 	filter: {
-		or: [
-			{ property: 'Status', status: { equals: '💤 Unstarted' } },
-			{ property: 'Status', status: { equals: '⚠️ Tentative' } },
-			{ property: 'Status', status: { equals: '📌 Suspended' } },
-			{ property: 'Status', status: { equals: '💡 Ongoing' } },
-		]
+		property: 'Date',
+        date: { on_or_after: today }
 	},
 	dateProperty: 'Date',
 	titleProperty: 'Task',
