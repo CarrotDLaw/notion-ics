@@ -81,7 +81,6 @@ export const GET: RequestHandler = async ({ params, url }) => {
                 busystatus: config.busy
             };
 
-            // Set the end to the provided value or default to the start time
             if (event.date.end) {
                 eventOptions.end = new Date(event.date.end);
             } else {
@@ -99,10 +98,15 @@ export const GET: RequestHandler = async ({ params, url }) => {
             };
 
             if (event.date.end) {
-                eventOptions.end = new Date(Date.parse(event.date.end));
-            } else {
-                eventOptions.end = start;
-            }
+				const end = new Date(event.date.end);
+				end.setDate(end.getDate() + 1);
+				eventOptions.end = end;
+			} else {
+				const end = new Date(start);
+				end.setDate(end.getDate() + 1);
+				eventOptions.end = end;
+			}
+			
             calendar.createEvent(eventOptions);
         }
 	});
