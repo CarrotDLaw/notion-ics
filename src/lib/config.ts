@@ -2,13 +2,14 @@ import { ICalEventBusyStatus } from 'ical-generator';
 import type { QueryDatabaseParameters } from '@notionhq/client/build/src/api-endpoints';
 
 export default {
-	// filter: {
-	// 	and: [
-	// 		{ property: 'Status', select: { does_not_equal: 'Completed' } },
-	// 		{ property: 'Status', select: { does_not_equal: 'Nope' } },
-	// 		{ property: 'Type', select: { equals: 'Task' } }
-	// 	]
-	// },
+	filter: {
+		or: [
+			{ property: 'Status', status: { equals: 'Unstarted' } },
+			{ property: 'Status', status: { equals: 'Tentative' } },
+			{ property: 'Status', status: { equals: 'Suspended' } },
+			{ property: 'Status', status: { equals: 'Ongoing' } },
+		]
+	},
 	dateProperty: 'Date',
 	titleProperty: 'Task',
 	locationProperty: 'Location',
