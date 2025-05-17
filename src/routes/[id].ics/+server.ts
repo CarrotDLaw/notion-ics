@@ -38,30 +38,73 @@ export const GET: RequestHandler = async ({ params, url }) => {
 	const filtered: {
 		title: string;
 		date: { start: string; end: string | null; time_zone: string | null };
+		location?: string;
 	}[] = databaseEntries.flatMap((object) => {
 		if (object.properties[config.dateProperty].date === null) {
 			return [];
 		}
+		
+		let location: string | undefined = undefined;
+        const locationProp = object.properties[config.locationProperty];
+        if (
+            locationProp &&
+            'rich_text' in locationProp &&
+            Array.isArray(locationProp.rich_text) &&
+            locationProp.rich_text.length > 0
+        ) {
+            location = locationProp.rich_text[0].plain_text;
+        }
+
 		return [
 			{
 				title: object.properties[config.titleProperty].title[0].text.content,
-				date: object.properties[config.dateProperty].date
+				date: object.properties[config.dateProperty].date,
+				location: location,
 			}
 		];
 	});
 
 	const calendar = ical({
 		name: databaseMetadata.title[0].text.content,
-		prodId: { company: 'Tomi Chen', language: 'EN', product: 'notion-ics' }
+		prodId: { company: 'CarrotDLaw', language: 'EN', product: 'notion-ics' }
 	});
 	filtered.forEach((event) => {
-		calendar.createEvent({
-			start: new Date(event.date.start),
-			end: new Date(Date.parse(event.date.end ?? event.date.start) + 86400000), // end date is exclusive, so add 1 day
-			allDay: true,
-			summary: event.title,
-			busystatus: config.busy
-		});
+		const isTimedEvent = event.date.start.includes('T');
+
+        if (isTimedEvent) {
+            const start = new Date(event.date.start);
+            const eventOptions: Record<string, any> = {
+                start,
+                allDay: false,
+                summary: event.title,
+                location: event.location,
+                busystatus: config.busy
+            };
+
+            // Set the end to the provided value or default to the start time
+            if (event.date.end) {
+                eventOptions.end = new Date(event.date.end);
+            } else {
+                eventOptions.end = start;
+            }
+            calendar.createEvent(eventOptions);
+        } else {
+            const start = new Date(event.date.start);
+            const eventOptions: Record<string, any> = {
+                start,
+                allDay: true,
+                summary: event.title,
+                location: event.location,
+                busystatus: config.busy
+            };
+
+            if (event.date.end) {
+                eventOptions.end = new Date(Date.parse(event.date.end));
+            } else {
+                eventOptions.end = start;
+            }
+            calendar.createEvent(eventOptions);
+        }
 	});
 
 	return new Response(calendar.toString(), {
