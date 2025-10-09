@@ -1,5 +1,5 @@
 import { ICalEventBusyStatus } from "ical-generator";
-import type { QueryDatabaseParameters } from "@notionhq/client/build/src/api-endpoints";
+import type { QueryDataSourceParameters } from "@notionhq/client/build/src/api-endpoints";
 
 const one_week_ago = new Date(new Date().setDate(new Date().getDate() - 7))
   .toISOString()
@@ -13,10 +13,9 @@ export default {
   dateProperty: "Date",
   titleProperty: "Task",
   locationProperty: "Location",
-
   busy: ICalEventBusyStatus.FREE,
 } as {
-  filter: Readonly<QueryDatabaseParameters["filter"]>;
+  filter: Readonly<QueryDataSourceParameters["filter"]>;
   dateProperty: Readonly<string>;
   titleProperty: Readonly<string>;
   locationProperty: Readonly<string>;
