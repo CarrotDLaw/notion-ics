@@ -48,6 +48,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
     title: string;
     date: { start: string; end: string | null; time_zone: string | null };
     location?: string;
+    url: string;
   }[] = databaseEntries.flatMap((object) => {
     if (object.properties[config.dateProperty].date === null) {
       return [];
@@ -70,6 +71,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
         title: object.properties[config.titleProperty].title[0].text.content,
         date: object.properties[config.dateProperty].date,
         location: location,
+        url: object.url,
       },
     ];
   });
@@ -91,6 +93,8 @@ export const GET: RequestHandler = async ({ params, url }) => {
         summary: event.title,
         location: event.location,
         busystatus: config.busy,
+        url: event.url,
+        description: `Open at ${event.url}`,
       };
 
       calendar.createEvent(eventOptions);
@@ -103,6 +107,8 @@ export const GET: RequestHandler = async ({ params, url }) => {
         location: event.location,
         busystatus: config.busy,
         id: event.id,
+        url: event.url,
+        description: `Open at ${event.url}`,
       };
 
       if (event.date.end) {
