@@ -94,7 +94,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
         location: event.location,
         busystatus: config.busy,
         url: event.url,
-        description: `Open at ${event.url}`,
+        // description: `Open at ${event.url}`,
       };
 
       calendar.createEvent(eventOptions);
@@ -108,7 +108,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
         busystatus: config.busy,
         id: event.id,
         url: event.url,
-        description: `Open at ${event.url}`,
+        // description: `Open at ${event.url}`,
       };
 
       if (event.date.end) {
