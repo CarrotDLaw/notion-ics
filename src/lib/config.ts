@@ -12,12 +12,12 @@ export default {
   },
   dateProperty: "Date",
   titleProperty: "Task",
-  locationProperty: "Location",
+  addressProperty: "Address",
   busy: ICalEventBusyStatus.FREE,
 } as {
   filter: Readonly<QueryDataSourceParameters["filter"]>;
   dateProperty: Readonly<string>;
   titleProperty: Readonly<string>;
-  locationProperty: Readonly<string>;
+  addressProperty: Readonly<string>;
   busy: Readonly<ICalEventBusyStatus>;
 };

@@ -37,7 +37,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
     query = await notion.dataSources.query({
       data_source_id: dataSource.id,
       page_size: 100,
-      start_cursor: query.next_cursor,
+      start_cursor: query.next_cursor || undefined,
       filter: config.filter,
     });
     databaseEntries.push(...query.results);
@@ -55,14 +55,14 @@ export const GET: RequestHandler = async ({ params, url }) => {
     }
 
     let location: string | undefined = undefined;
-    const locationProp = object.properties[config.locationProperty];
+    const addressProp = object.properties[config.addressProperty];
     if (
-      locationProp &&
-      "rich_text" in locationProp &&
-      Array.isArray(locationProp.rich_text) &&
-      locationProp.rich_text.length > 0
+      addressProp &&
+      "rich_text" in addressProp &&
+      Array.isArray(addressProp.rich_text) &&
+      addressProp.rich_text.length > 0
     ) {
-      location = locationProp.rich_text[0].plain_text;
+      location = addressProp.rich_text[0].plain_text;
     }
 
     return [
