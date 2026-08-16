@@ -1,4 +1,4 @@
-import ical, { ICalAlarmType, ICalAlarmRelatesTo } from "ical-generator";
+import ical, { ICalCalendar, ICalAlarmType, ICalAlarmRelatesTo } from 'ical-generator';
 import { Client } from "@notionhq/client";
 import type {
   DatabaseObjectResponse,
@@ -93,9 +93,9 @@ export const GET: RequestHandler = async ({ params, url }) => {
     const alarms = shouldAddEndAlarm
       ? [
           {
-            type: ICalAlarmType.display,
+            type: "display" as const,
             trigger: 120,
-            relatesTo: ICalAlarmRelatesTo.end,
+            triggerRelatedTo: "end" as const,
           },
         ]
       : [];
