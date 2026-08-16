@@ -95,7 +95,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
           {
             type: "display" as const,
             trigger: 120,
-            triggerRelatedTo: "START" as const,
+            triggerRelatedTo: "END" as const,
           },
         ]
       : [];
