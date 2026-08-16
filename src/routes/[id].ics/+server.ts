@@ -1,4 +1,4 @@
-import ical, { ICalCalendar, ICalAlarmType, ICalAlarmRelatesTo } from 'ical-generator';
+import ical, { type ICalAlarmData } from "ical-generator";
 import { Client } from "@notionhq/client";
 import type {
   DatabaseObjectResponse,
@@ -83,29 +83,34 @@ export const GET: RequestHandler = async ({ params, url }) => {
 
   filtered.forEach((event) => {
     const isTimedEvent = event.date.start.includes("T");
-
-    // Check if title equals secret variable AND does NOT contain "LEAVE" (case-insensitive)
     const isTargetTitle = TITLE_STRING_1 && event.title === TITLE_STRING_1;
     const containsLeave = event.title.toUpperCase().includes("LEAVE");
-
     const shouldAddEndAlarm = isTargetTitle && !containsLeave;
 
-    const alarms = shouldAddEndAlarm
-      ? [
-          {
-            type: "display" as const,
-            trigger: -120,
-            relatesTo: "END" as const,
-          },
-        ]
-      : [];
-
     if (isTimedEvent) {
+      const startDate = new Date(event.date.start);
+      const endDate = event.date.end
+        ? new Date(event.date.end)
+        : new Date(startDate);
+
+      const durationInSeconds = Math.floor(
+        (endDate.getTime() - startDate.getTime()) / 1000,
+      );
+      const triggerSecondsFromStart = durationInSeconds - 120;
+
+      const alarms: ICalAlarmData[] =
+        shouldAddEndAlarm && triggerSecondsFromStart > 0
+          ? [
+              {
+                type: "display" as const,
+                trigger: -triggerSecondsFromStart,
+              },
+            ]
+          : [];
+
       const eventOptions = {
-        start: new Date(event.date.start),
-        end: event.date.end
-          ? new Date(event.date.end)
-          : new Date(event.date.start),
+        start: startDate,
+        end: endDate,
         allDay: false,
         summary: event.title,
         location: event.location,
@@ -127,7 +132,6 @@ export const GET: RequestHandler = async ({ params, url }) => {
         id: event.id,
         url: event.url,
         // description: `Open at ${event.url}`,
-        alarms: alarms,
       };
 
       if (event.date.end) {
