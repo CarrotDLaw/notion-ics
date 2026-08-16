@@ -6,7 +6,7 @@ import type {
 } from "@notionhq/client/build/src/api-endpoints";
 
 import config from "$lib/config";
-import { ACCESS_KEY, NOTION_TOKEN } from "$env/static/private";
+import { ACCESS_KEY, NOTION_TOKEN, TITLE_STRING_1 } from "$env/static/private";
 import type { RequestHandler } from "./$types";
 
 export const trailingSlash = "never";
@@ -80,8 +80,26 @@ export const GET: RequestHandler = async ({ params, url }) => {
     name: dataSource.name,
     prodId: { company: "CarrotDLaw", language: "EN", product: "notion-ics" },
   });
+
   filtered.forEach((event) => {
     const isTimedEvent = event.date.start.includes("T");
+
+    // Check if title equals secret variable AND does NOT contain "LEAVE" (case-insensitive)
+    const isTargetTitle = TITLE_STRING_1 && event.title === TITLE_STRING_1;
+    const containsLeave = event.title.toUpperCase().includes("LEAVE");
+    
+    const shouldAddEndAlarm = isTargetTitle && !containsLeave;
+
+    // Build the alarms array if criteria met
+    const alarms = shouldAddEndAlarm
+      ? [
+          {
+            type: "display" as const,
+            trigger: -120, // 2 minutes (120 seconds) before end
+            triggerRelatedTo: "END" as const,
+          },
+        ]
+      : [];
 
     if (isTimedEvent) {
       const eventOptions = {
