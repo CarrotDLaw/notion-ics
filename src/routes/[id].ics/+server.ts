@@ -87,15 +87,14 @@ export const GET: RequestHandler = async ({ params, url }) => {
     // Check if title equals secret variable AND does NOT contain "LEAVE" (case-insensitive)
     const isTargetTitle = TITLE_STRING_1 && event.title === TITLE_STRING_1;
     const containsLeave = event.title.toUpperCase().includes("LEAVE");
-    
+
     const shouldAddEndAlarm = isTargetTitle && !containsLeave;
 
-    // Build the alarms array if criteria met
     const alarms = shouldAddEndAlarm
       ? [
           {
             type: "display" as const,
-            trigger: -120, // 2 minutes (120 seconds) before end
+            trigger: -120,
             triggerRelatedTo: "END" as const,
           },
         ]
@@ -113,6 +112,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
         busystatus: config.busy,
         url: event.url,
         // description: `Open at ${event.url}`,
+        alarms: alarms,
       };
 
       calendar.createEvent(eventOptions);
@@ -127,6 +127,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
         id: event.id,
         url: event.url,
         // description: `Open at ${event.url}`,
+        alarms: alarms,
       };
 
       if (event.date.end) {
