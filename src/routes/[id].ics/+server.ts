@@ -103,7 +103,7 @@ export const GET: RequestHandler = async ({ params, url }) => {
           ? [
               {
                 type: "display" as const,
-                trigger: -triggerSecondsFromStart,
+                triggerAfter: -triggerSecondsFromStart,
               },
             ]
           : [];
