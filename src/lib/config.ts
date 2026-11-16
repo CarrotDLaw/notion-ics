@@ -4,11 +4,14 @@ import type { QueryDataSourceParameters } from "@notionhq/client/build/src/api-e
 const one_week_ago = new Date(new Date().setDate(new Date().getDate() - 7))
   .toISOString()
   .split("T")[0];
+const one_month_ago = new Date(new Date().setDate(new Date().getDate() - 32))
+  .toISOString()
+  .split("T")[0];
 
 export default {
   filter: {
     property: "Date",
-    date: { on_or_after: one_week_ago },
+    date: { on_or_after: one_month_ago },
   },
   dateProperty: "Date",
   titleProperty: "Task",
